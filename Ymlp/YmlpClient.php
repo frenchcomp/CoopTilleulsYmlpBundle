@@ -73,7 +73,7 @@ class YmlpClient
     public function call($method, array $params = [])
     {
         $response = $this->client->post($method, ['body' => $params]);
-        $data = $this->parseError($response->json());
+        $data = $this->parseError(\json_decode((string) $response->getBody(), true));
 
         return $data;
     }
