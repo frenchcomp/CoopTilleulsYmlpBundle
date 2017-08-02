@@ -17,7 +17,7 @@
         "symfony/config": "^2.3 || ^3.0",
         "symfony/dependency-injection": "^2.3 || ^3.0",
         "symfony/http-kernel": "^2.3 || ^3.0",
-        "guzzlehttp/guzzle": "^6.0"
+        "guzzlehttp/guzzle": "^4.0||^6.0"
     },
     "require-dev": {
         "phpspec/phpspec": "^2.0"

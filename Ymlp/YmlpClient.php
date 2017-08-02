@@ -16,6 +16,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface as Psr7ResponseInterface;
+use GuzzleHttp\Message\ResponseInterface as GuzzleResponseInterface;
 
 /**
  * YmlpClient.
@@ -73,7 +75,11 @@ class YmlpClient
     public function call($method, array $params = [])
     {
         $response = $this->client->post($method, ['body' => $params]);
-        $data = $this->parseError(\json_decode((string) $response->getBody(), true));
+        if ($response instanceof Psr7ResponseInterface) {
+            $data = $this->parseError(\json_decode((string)$response->getBody() , true));
+        } elseif ($response instanceof GuzzleResponseInterface) {
+            $data = $this->parseError($response->json());
+        }
 
         return $data;
     }
