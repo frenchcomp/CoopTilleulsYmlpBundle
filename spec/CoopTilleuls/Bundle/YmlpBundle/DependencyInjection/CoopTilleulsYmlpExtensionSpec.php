@@ -44,8 +44,8 @@ class CoopTilleulsYmlpExtensionSpec extends ObjectBehavior
         $container->setParameter('coop_tilleuls_ymlp.api_key', self::API_KEY)->shouldBeCalled();
         $container->setParameter('coop_tilleuls_ymlp.api_username', self::API_USERNAME)->shouldBeCalled();
         $container->hasExtension('http://symfony.com/schema/dic/services')->shouldBeCalled();
-        $container->addResource(Argument::type('Symfony\Component\Config\Resource\FileResource'))->shouldBeCalled();
         $container->setDefinition('coop_tilleuls_ymlp.client', Argument::type('Symfony\Component\DependencyInjection\Definition'))->shouldBeCalled();
+        $container->fileExists(Argument::type('string'))->shouldBeCalled()->willReturn(true);
 
         $configs = [
             [
