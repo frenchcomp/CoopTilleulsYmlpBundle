@@ -74,7 +74,8 @@ class YmlpClient
      */
     public function call($method, array $params = [])
     {
-        $response = $this->client->post($method, ['body' => $params]);
+        $response = $this->client->request('post', $method, ['body' => $params]);
+        $data = [];
         if ($response instanceof Psr7ResponseInterface) {
             $data = $this->parseError(\json_decode((string)$response->getBody() , true));
         } elseif ($response instanceof GuzzleResponseInterface) {

@@ -12,7 +12,7 @@
 namespace spec\CoopTilleuls\Bundle\YmlpBundle\Ymlp;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -29,11 +29,11 @@ class YmlpClientSpec extends ObjectBehavior
 
     public function let(ClientInterface $client, ResponseInterface $response)
     {
-        $client->post(Argument::type('string'), Argument::type('array'))->will(function ($args) use ($response) {
-            if ('Error' === $args[0]) {
-                $response->json()->willReturn(['Code' => 1, 'Output' => 'error']);
+        $client->request(Argument::type('string'), Argument::type('string'), Argument::type('array'))->will(function ($args) use ($response) {
+            if ('Error' === $args[1]) {
+                $response->getBody()->willReturn(\json_encode(['Code' => 1, 'Output' => 'error']));
             } else {
-                $response->json()->willReturn(['Code' => 0]);
+                $response->getBody()->willReturn(\json_encode(['Code' => 0]));
             }
 
             return $response;
