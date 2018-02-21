@@ -32,6 +32,11 @@ class YmlpClient
     protected $client;
 
     /**
+     * @var array
+     */
+    private $defaultBody = [];
+
+    /**
      * @param string          $apiUrl
      * @param string          $apiKey
      * @param string          $apiUsername
@@ -41,19 +46,20 @@ class YmlpClient
     {
         if (null === $client) {
             $client = new Client([
-                'base_url' => $apiUrl,
+                'base_uri' => $apiUrl,
                 'defaults' => [
                     'headers' => [
                         'User-Agent' => 'CoopTilleulsYmlpBundle for Symfony',
                     ],
-                    'body' => [
-                        'Key' => $apiKey,
-                        'Username' => $apiUsername,
-                        'Output' => 'JSON',
-                    ],
                 ],
             ]);
         }
+
+        $this->defaultBody = [
+            'Key' => $apiKey,
+            'Username' => $apiUsername,
+            'Output' => 'JSON',
+        ];
 
         $this->client = $client;
     }
@@ -74,12 +80,17 @@ class YmlpClient
      */
     public function call($method, array $params = [])
     {
-        $response = $this->client->request('post', $method, ['body' => $params]);
+        $response = $this->client->request(
+            'post',
+            $method,
+            ['form_params' => \array_merge($this->defaultBody, $params)]
+        );
+
         $data = [];
         if ($response instanceof Psr7ResponseInterface) {
-            $data = $this->parseError(\json_decode((string)$response->getBody() , true));
-        } elseif ($response instanceof GuzzleResponseInterface) {
-            $data = $this->parseError($response->json());
+            $stringBody = (string) $response->getBody();
+            $decodedValue = \json_decode($stringBody, true);
+            $data = $this->parseError($decodedValue);
         }
 
         return $data;
@@ -96,7 +107,7 @@ class YmlpClient
      */
     protected function parseError(array $data)
     {
-        if (isset($data['Code']) && intval($data['Code']) > 0) {
+        if (isset($data['Code']) && intval($data['Code']) > 0 && intval($data['Code']) != 3) {
             throw new YmlpException($data['Output'], intval($data['Code']));
         }
 

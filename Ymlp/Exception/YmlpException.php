@@ -18,4 +18,11 @@ namespace CoopTilleuls\Bundle\YmlpBundle\Ymlp\Exception;
  */
 class YmlpException extends \Exception
 {
+    /**
+     * @return bool
+     */
+    public function isUnsubscribed()
+    {
+        return 4 == (int) $this->code;
+    }
 }
